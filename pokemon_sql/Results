@@ -1,0 +1,70 @@
+/*What are all the types of pokemon that a pokemon can have?*/
+select name from pokemon.types;
+
+/*What is the name of the pokemon with id 45?*/
+
+select name from pokemon.pokemons where id = '45';
+
+/*How many pokemon are there?*/
+
+select COUNT(*) as 'Count' from pokemon.pokemons;
+
+/*How many types are there?*/
+
+  select COUNT(*) as 'Count' from pokemon.types;
+
+/*How many pokemon have a secondary type?*/
+
+select COUNT(*) as'Secondary Count' from pokemon.pokemons where secondary_type is not null;
+
+/*What is each pokemon's primary type?*/
+
+Select pokemons.name as 'Pokemon_Name', types.name as 'Primary_Type'
+from Pokemon.pokemons inner join pokemon.types
+on pokemons.primary_type = types.id;
+
+/*What is Rufflet's secondary type?*/
+
+Select pokemons.Id, pokemons.Primary_type, pokemons.secondary_type, types.name as 'Secondary Type'
+from Pokemon.pokemons inner join pokemon.types On pokemons.secondary_type = types.id And pokemons.name = 'Rufflet';
+
+/*What are the names of the pokemon that belong to the trainer with trainerID 303?*/
+/*Select  Pokemons.id, pokemons.name*/
+
+select pokemons.name, pokemons.id, pokemon_trainer.trainerID from pokemon.pokemons inner join pokemon.pokemon_trainer on pokemons.id=pokemon_trainer.pokemon_id
+where pokemon_trainer.trainerID=303;
+
+/*How many pokemon have a secondary type Poison*/
+select COUNT(*) as 'Secondary type Poison' from pokemon.pokemons inner join pokemon.types on pokemons.secondary_type=types.id where types.name='Poison';
+
+
+/*What are all the primary types and how many pokemon have that type?*/
+
+select types.name, X.count from (select pokemons.primary_type, count(*) as 'Count' from pokemon.pokemons group by primary_type) as X inner join
+pokemon.types on x.primary_type=types.id;
+
+
+/*How many pokemon at level 100 does each trainer with at least one level 100 pokemone have? (Hint: your query should not
+ display a trainer*/
+ Select Count(*) from pokemon.pokemon_trainer where trainerID in (Select distinct(trainerID)from pokemon.pokemon_trainer
+Where pokelevel = 100) And  pokelevel = 100;
+
+/*How many pokemon only belong to one trainer and no other?*/
+
+
+
+/*select pokemon_trainer.pokemon_id, COUNT(*) as 'Count' from pokemon.pokemon_trainer group by pokemon_trainer.pokemon_id order by Count asc;*/
+
+select pokemon_trainer.pokemon_id, COUNT(*) as 'Count' from pokemon.pokemon_trainer group by pokemon_trainer.pokemon_id having Count(*)=2;
+
+/*Query to return the columns "Pokemon Name, Trainer Name, Level, Primary Type, Secondary Type"*/
+
+
+Select P.Name as 'Pokemon Name',  T.trainername as 'Trainer_Name', PT.pokelevel as 'Level', TPP.Name as 'Primary_Type',
+       TPS.Name  as 'Secondary_Type' from Pokemon.Pokemons P
+Inner Join Pokemon.Pokemon_trainer PT on P.ID = PT.pokemon_id
+Inner Join Pokemon.trainers T on T.trainerID = PT.trainerID
+Inner Join Pokemon.types TPP on TPP.ID = P.primary_type
+Inner Join Pokemon.types TPS on TPS.ID = P.secondary_type
+Order by PT.Pokelevel desc ;
+
